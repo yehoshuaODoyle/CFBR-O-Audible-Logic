@@ -1,0 +1,172 @@
+
+--  The following section determines when the CPU will call an audible on offense
+function OffensiveAudible()
+        if (GETFKICKOFF() == 0) then
+                if (GETFNOHUDDLE() > 1) then  -- NOHUDDLEHURRYUP situations
+                        if (GETSCOREDIFF()  < 0) then  -- WE'RE LOSING
+                                if (GETQUARTER()  == 2 and GETTIMEREMAININGHALF()  < 120) then  -- UNDER 2:00 REMAINING IN THE 2ND QUARTER
+                                        if (GETYARDSTOENDZONE()  <= 37) then  -- We're in FG range
+                                                if (GETOFFTIMEOUTS()  == 0 and GETTIMEREMAININGHALF()  < 60) then  -- Under 1:00 with no TIMEOUTs remaining
+                                                        if (GETDOWN()  < 3) then  -- Spike the ball on 1st / 2nd down
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                        if (GETDOWN()  == 3 and GETTIMEREMAININGHALF()  < 30) then  -- Spike the ball on 3rd down when under :30
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                end
+                                                if (GETOFFTIMEOUTS()  == 0 and GETTIMEREMAININGHALF()  >= 60) then  -- Between 1:00 and 2:00 with no TIMEOUTs remaining
+                                                        if (GETDOWN()  == 1) then  -- Spike the ball on 1st down
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                end
+                                        end
+                                end
+                                if (GETQUARTER()  == 4 and GETTIMEREMAINING()  < 120) then  -- UNDER 2:00 REMAINING IN REGULATION
+                                        if (GETYARDSTOENDZONE()  <= 37) then  -- We're in FG range
+                                                if (GETOFFTIMEOUTS()  == 0 and GETSCOREDIFF()  >= -3) then  -- We're within a field goal with no TIMEOUTs remaining
+                                                        if (GETDOWN()  < 4 and GETTIMEREMAINING()  < 20) then  -- Spike the ball if it is not 4th down and when under 20 seconds
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                end
+                                                if (GETOFFTIMEOUTS()  == 0 and GETSCOREDIFF()  < -3) then  -- We're losing by more than a field goal
+                                                        if (GETDOWN()  < 3 and GETTIMEREMAINING()  < 60) then  -- Spike the ball if it is not 4th down and when under 20 seconds
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                end
+                                        end
+                                        if (GETOFFTIMEOUTS()  <= 1 and GETDOWN()  == 2) then  -- You're losing in the 4th quarter and clock is running (under 2 min.) on 1st or 2nd down and you have 0-1 TIMEOUTs remaining
+                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                return
+                                        end
+                                        if (GETTIMEREMAINING()  <= 20 and GETOFFTIMEOUTS()  == 0 and GETDOWN()  < 4) then
+                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                return
+                                        end
+                                end
+                        end
+                        if (GETSCOREDIFF()  == 0) then  -- WE'RE TIED
+                                if (GETQUARTER()  == 2 and GETTIMEREMAININGHALF()  < 120) then  -- UNDER 2:00 REMAINING IN THE 2ND QUARTER
+                                        if (GETYARDSTOENDZONE()  <= 37) then  -- We're in FG range
+                                                if (GETOFFTIMEOUTS()  == 0 and GETTIMEREMAININGHALF()  < 60) then  -- Under 1:00 with no TIMEOUTs remaining
+                                                        if (GETDOWN()  < 3) then  -- Spike the ball on 1st / 2nd down
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                        if (GETDOWN()  == 3 and GETTIMEREMAININGHALF()  < 30) then  -- Spike the ball on 3rd down when under :20
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                end
+                                                if (GETOFFTIMEOUTS()  == 0 and GETTIMEREMAININGHALF()  >= 60) then  -- Between 1:00 and 2:00 with no TIMEOUTs remaining
+                                                        if (GETDOWN()  == 1) then  -- Spike the ball on 1st down
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                end
+                                        end
+                                end
+                                if (GETQUARTER()  == 4 and GETTIMEREMAINING()  < 120) then  -- UNDER 2:00 REMAINING IN REGULATION
+                                        if (GETYARDSTOENDZONE()  <= 37) then  -- We're in FG range
+                                                if (GETOFFTIMEOUTS()  == 0) then  -- We're within a field goal with no TIMEOUTs remaining
+                                                        if (GETDOWN()  < 4 and GETTIMEREMAINING()  < 30) then  -- Spike the ball if it is not 4th down and when under 30 seconds - Make sure we spike it with only a few seconds left
+                                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                                return
+                                                        end
+                                                end
+                                        end
+                                end
+                        end
+                        if (GETSCOREDIFF()  > 0 and GETQUARTER()  == 2 and GETTIMEREMAININGHALF()  <= 120) then  -- WE'RE WINNING (the only time we would ever want to hurry up is in the last 2:00 of the 2nd quarter)
+                                if (GETOFFTIMEOUTS()  == 0 and GETYARDSTOENDZONE()  <= 37) then  -- We're out of TIMEOUTs and we are in FG range
+                                        if (GETDOWN()  < 3 and GETTIMEREMAININGHALF()  < 60) then  -- Spike the ball under 1:00 if it is 1st or 2nd down
+                                                SETPLAYGROUP(COSTOPCLOCK)
+                                                return
+                                        end
+                                        if (GETDOWN()  == 3 and GETTIMEREMAININGHALF()  < 60) then
+                                                if (GETTIMEREMAININGHALF()  < 20) then  -- We don't have time for two plays - spike the ball and but don't spike it until there are only a few seconds remaining
+                                                        SETPLAYGROUP(COSTOPCLOCK)
+                                                        return
+                                                end
+                                        end
+                                end
+                        end
+                        SETPLAYGROUP(COCTIME)
+                        return
+                end
+                -- not no huddle
+                if(GETOFFPLAYGROUP(COFGFAKEFG) or GETOFFPLAYGROUP(COFG)) then
+                elseif(GETOFFPLAYGROUP(COPUNT)) then
+                        if(GETDEFPLAYGROUP(CDPUNTRETURN) or GETDEFPLAYGROUP(CDPUNTRETURNSAFE)) then
+                        else
+                                SETPLAYGROUP(COPUNTMAXPROTECT)
+                                return
+                        end
+                elseif(GETOFFPLAYGROUP(COWTIME)) then  -- CPU is trying to waste time and this will prevent the user from forcing them to pass
+                        if (GETSCOREDIFF()  > 0 and GETQUARTER()  == 4 and GETTIMEREMAININGQUARTER()  <= 210)  -- This is acutally the check to see if CPU is trying to waste time.
+                                then  -- This was hitting true because some plays belonged to COWTIME and but the situation did not call for COWTIME
+                                if(GETDEFPLAYGROUP(CDPUNTRETURN) or GETDEFPLAYGROUP(CDPUNTRETURNSAFE) or GETDEFPLAYGROUP(CDPUNTRETURNBLOCK) or GETDEFPLAYGROUP(CDFGBLOCK)) then
+                                        SETPLAYGROUP(COWTIME)
+                                        return
+                                else
+                                end
+                        end
+                else
+                        if(GETDEFPLAYGROUP(CDGOALRUN) or GETDEFPLAYGROUP(CDGOALLINE)) then
+                                -- calling goal line when not needed
+                                if (GETTIMEREMAINING() > 180 and GETSCOREDIFF()  <= 0) then
+                                        if (GETYARDSTOENDZONE()  > 12) then
+                                                if (GETDOWN()  == 1 and GETRANDOMNUMBER(1)  < 35) then
+                                                        SETPLAYGROUP(COCTIME)
+                                                        return
+                                                end
+                                                if (GETDOWN()  == 2 and GETRANDOMNUMBER(1)  < 35) then
+                                                        SETPLAYGROUP(COCTIME)
+                                                        return
+                                                end
+                                        end
+                                end
+                        elseif(GETDEFPLAYGROUP(CDPUNTRETURN) or GETDEFPLAYGROUP(CDPUNTRETURNSAFE) or GETDEFPLAYGROUP(CDPUNTRETURNBLOCK) or GETDEFPLAYGROUP(CDFGBLOCK)) then
+                                -- calling blocks when not needed
+                                if (GETDOWN()  < 4 and GETQUARTER()  < 4) then  --First 3 quarters and always call CO3RDLONG when the defense lines up an a block
+                                        SETPLAYGROUP(CO3RDLONG)
+                                        return
+                                end
+                                if (GETDOWN()  < 4 and GETQUARTER()  == 4 and GETSCOREDIFF()  <= 0) then  -- In the 4th quarter and don't throw it if you're winning
+                                        SETPLAYGROUP(CO3RDLONG)
+                                        return
+                                end
+                        end
+                end
+        end
+
+        if (GETFKICKOFF() == 1 and GETQUARTER()  == 4) then
+                -- if kickoff check for audible
+                if(GETOFFPLAYGROUP(COKICKOFFONSIDE)) then
+                else
+                        if (GETYARDSTOENDZONE()  > 25 and GETTIMEREMAINING()  <= 300 and GETTIMEREMAINING()  >= 210 and GETSCOREDIFF()  <= -17) then
+                                SETPLAYGROUP(COKICKOFFONSIDE)
+                                return
+                        end
+                        if (GETYARDSTOENDZONE()  > 25 and GETTIMEREMAINING()  <= 210 and GETTIMEREMAINING()  >= 120 and GETSCOREDIFF()  <= -9) then
+                                SETPLAYGROUP(COKICKOFFONSIDE)
+                                return
+                        end
+                        if (GETYARDSTOENDZONE()  > 25 and GETTIMEREMAINING()  <= 120 and GETSCOREDIFF()  < 0) then
+                                SETPLAYGROUP(COKICKOFFONSIDE)
+                                return
+                        end
+                end
+        end
+end
+
+
+
+
+
+
+
